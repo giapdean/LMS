@@ -1967,9 +1967,23 @@
 
       const mat = document.getElementById('materials');
       if (lesson && lesson.materialUrl) {
-        mat.innerHTML = '<h3>TÀI LIỆU</h3><a href="' + lesson.materialUrl + '" target="_blank" rel="noreferrer">📥 Tải tài liệu</a>';
+        if (lesson.materialUrl.includes('\n')) {
+          // Nhiều tài liệu
+          const links = lesson.materialUrl.split('\n');
+          let html = '<h3>TÀI LIỆU</h3><div style="display:flex;flex-direction:column;gap:12px;">';
+          links.forEach((link, idx) => {
+            if (link.trim()) {
+              html += '<a href="' + link.trim() + '" target="_blank" rel="noreferrer">📥 Tải tài liệu ' + (idx + 1) + '</a>';
+            }
+          });
+          html += '</div>';
+          mat.innerHTML = html;
+        } else {
+          // 1 tài liệu
+          mat.innerHTML = '<h3>TÀI LIỆU</h3><a href="' + lesson.materialUrl + '" target="_blank" rel="noreferrer">📥 Tải tài liệu</a>';
+        }
       } else {
-        mat.innerHTML = '<div class="muted" style="margin-top: 40px;">No materials available for this lesson.</div>';
+        mat.innerHTML = '<div class="muted" style="margin-top: 40px;">Không có tài liệu cho bài học này.</div>';
       }
     }
 
