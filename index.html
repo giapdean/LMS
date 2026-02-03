@@ -1967,21 +1967,31 @@
 
       const mat = document.getElementById('materials');
       if (lesson && lesson.materialUrl) {
-        if (lesson.materialUrl.includes('\n')) {
-          // Nhiều tài liệu
-          const links = lesson.materialUrl.split('\n');
-          let html = '<h3>TÀI LIỆU</h3><div style="display:flex;flex-direction:column;gap:12px;">';
-          links.forEach((link, idx) => {
-            if (link.trim()) {
-              html += '<a href="' + link.trim() + '" target="_blank" rel="noreferrer">📥 Tải tài liệu ' + (idx + 1) + '</a>';
-            }
-          });
-          html += '</div>';
-          mat.innerHTML = html;
-        } else {
-          // 1 tài liệu
-          mat.innerHTML = '<h3>TÀI LIỆU</h3><a href="' + lesson.materialUrl + '" target="_blank" rel="noreferrer">📥 Tải tài liệu</a>';
-        }
+        const lines = lesson.materialUrl.split('\n');
+        let html = '<h3>TÀI LIỆU</h3><div style="display:flex;flex-direction:column;gap:12px;">';
+
+        lines.forEach((line, idx) => {
+          if (!line.trim()) return;
+
+          let name = 'Tải tài liệu';
+          if (lines.length > 1) name += ' ' + (idx + 1);
+          let url = line.trim();
+
+          // Parse format "Tên File|URL"
+          if (line.includes('|')) {
+            const parts = line.split('|');
+            name = parts[0].trim();
+            url = parts[1].trim();
+          }
+
+          // Chỉ hiển thị nếu có URL
+          if (url.startsWith('http')) {
+            html += '<a href="' + url + '" target="_blank" rel="noreferrer">📥 ' + escapeHtml(name) + '</a>';
+          }
+        });
+
+        html += '</div>';
+        mat.innerHTML = html;
       } else {
         mat.innerHTML = '<div class="muted" style="margin-top: 40px;">Không có tài liệu cho bài học này.</div>';
       }
